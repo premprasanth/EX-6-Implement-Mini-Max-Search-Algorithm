@@ -1,12 +1,12 @@
 <h1>ExpNo 6 : Implement Minimax Search Algorithm for a Simple TIC-TAC-TOE game</h1> 
-<h3>Name:      </h3>
-<h3>Register Number:       </h3>
-<H3>Aim:</H3>
+<h3>Name: PREM PRASANTH J    </h3>
+<h3>Register Number: 2305001028      </h3>
+<H3>AIM:</H3>
 <p>
     Implement Minimax Search Algorithm for a Simple TIC-TAC-TOE game
 </p>
 
-<H3>Theory and Procedure:</H3>
+<H3>THEORY AND PROCEDURE:</H3>
 To begin, let's start by defining what it means to play a perfect game of tic tac toe:
 
 If I play perfectly, every time I play I will either win the game, or I will draw the game. Furthermore if I play against another perfect player, I will always draw the game.
@@ -101,53 +101,100 @@ def minimax(game)
         return scores[min_score_index]
     end
 end
-## program
+## PROGRAM:
 ```python
 import math
 
-def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth, alpha, beta):
-    # Base case: targetDepth reached
-    if curDepth == targetDepth:
-        return scores[nodeIndex]
+def print_board(b):
+    for row in b:
+        print(" | ".join(row))
+        print("-" * 5)
 
-    if maxTurn:
-        maxEval = -math.inf  # Initialize maximum evaluation
-        # Maximizing player's turn
-        for i in range(2):  # There are two children for each node
-            eval = minimax(curDepth + 1, nodeIndex * 2 + i, False, scores, targetDepth, alpha, beta)
-            maxEval = max(maxEval, eval)
-            alpha = max(alpha, eval)  # Update alpha
-            if beta <= alpha:  # Beta pruning
-                break
-        return maxEval
+def check_winner(b):
+    for i in range(3):
+        if b[i][0] == b[i][1] == b[i][2] != " ": return b[i][0]
+        if b[0][i] == b[1][i] == b[2][i] != " ": return b[0][i]
+    if b[0][0] == b[1][1] == b[2][2] != " ": return b[0][0]
+    if b[0][2] == b[1][1] == b[2][0] != " ": return b[0][2]
+    return None
+
+def minimax(b, is_max):
+    winner = check_winner(b)
+    if winner == "O": return 1
+    if winner == "X": return -1
+    if all(cell != " " for row in b for cell in row): return 0
+
+    if is_max:
+        best = -math.inf
+        for i in range(3):
+            for j in range(3):
+                if b[i][j] == " ":
+                    b[i][j] = "O"
+                    best = max(best, minimax(b, False))
+                    b[i][j] = " "
+        return best
     else:
-        minEval = math.inf  # Initialize minimum evaluation
-        # Minimizing player's turn
-        for i in range(2):  # There are two children for each node
-            eval = minimax(curDepth + 1, nodeIndex * 2 + i, True, scores, targetDepth, alpha, beta)
-            minEval = min(minEval, eval)
-            beta = min(beta, eval)  # Update beta
-            if beta <= alpha:  # Alpha pruning
-                break
-        return minEval
+        best = math.inf
+        for i in range(3):
+            for j in range(3):
+                if b[i][j] == " ":
+                    b[i][j] = "X"
+                    best = min(best, minimax(b, True))
+                    b[i][j] = " "
+        return best
 
- scores = [3, 5, 6, 9, 1, 2, 0, -1]
-    targetDepth = 3  # Example target depth
+def best_move(b):
+    best_score = -math.inf
+    move = None
+    for i in range(3):
+        for j in range(3):
+            if b[i][j] == " ":
+                b[i][j] = "O"
+                score = minimax(b, False)
+                b[i][j] = " "
+                if score > best_score:
+                    best_score = score
+                    move = (i, j)
+    return move
 
-    # Start Minimax from the root with initial alpha and beta values
-    best_value = minimax(0, 0, True, scores, targetDepth, -math.inf, math.inf)
-    print("The optimal value is:", best_value)
+
+board = [[" "]*3 for _ in range(3)]
+print("You are X | AI is O")
+
+while True:
+    print_board(board)
+    winner = check_winner(board)
+    if winner or all(c != " " for r in board for c in r):
+        print("Winner:", winner if winner else "Draw!")
+        break
+
+    try:
+        r = int(input("Enter row (0-2): "))
+        c = int(input("Enter col (0-2): "))
+        if 0 <= r <= 2 and 0 <= c <= 2 and board[r][c] == " ":
+            board[r][c] = "X"
+        else:
+            print("Invalid move! Try again.")
+            continue
+    except:
+        print("Enter valid numbers!")
+        continue
+
+    if not check_winner(board):
+        move = best_move(board)
+        if move:
+            board[move[0]][move[1]] = "O"
+
 ```
 
 <hr>
-<h2>Sample Input and Output</h2>
+<h2>INPUT AND OUTPUT:</h2>
 
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/6b668685-8bcc-43c5-b5c2-ddd43f3da84a)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/8ca1b08a-8312-4ef5-89df-e69b7b2c3fa2)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/dc06427a-d4ce-43a1-95bd-9acfaefac323)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a8a27e2a-6fd4-46a2-afb5-6d27b8556702)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a2acb6a1-ed8e-42e5-8968-fe805e4b0255)
+<img width="339" height="512" alt="image" src="https://github.com/user-attachments/assets/a80dc512-3317-45be-a513-74768f13b5a1" />
+<img width="277" height="537" alt="image" src="https://github.com/user-attachments/assets/e23955ce-2b7e-41a4-8ff6-62a35b81836e" />
+<img width="266" height="320" alt="image" src="https://github.com/user-attachments/assets/5f38939f-0280-4a81-9d02-1502bc39fe13" />
 
-<hr>
-<h2>Result:</h2>
+</hr>
+
+<h2>RESULT:</h2>
 <p>Thus,Implementation of  Minimax Search Algorithm for a Simple TIC-TAC-TOE game wasa done successfully.</p>
